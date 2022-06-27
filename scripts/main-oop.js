@@ -6,25 +6,55 @@ const btnConfirmar = document.querySelector(".confirmar");
 const btnCancelar = document.querySelector(".cancelar");
 const btnPedir = document.querySelector(".fazer-pedido");
 
+class Prato {
+  constructor({ nome, imagem, descricao, preco }) {
+    this.nome = nome;
+    this.imagem = imagem;
+    this.descricao = descricao;
+    this.preco = preco;
+  }
+
+  getView() {
+    const view = document.createElement("div");
+    view.classList.add("opcao");
+    view.addEventListener("click", () => {
+      selecionarPrato(view, this.nome, this.preco);
+    });
+    view.innerHTML = `
+          <img src="${this.imagem}" />
+          <div class="titulo">${this.nome}</div>
+          <div class="descricao">${this.descricao}</div>
+          <div class="fundo">
+              <div class="preco">R$ ${this.preco.toFixed(2)}</div>
+              <div class="check">
+                  <ion-icon name="checkmark-circle"></ion-icon>
+              </div>
+          </div>
+      `;
+
+    return view;
+  }
+}
+
 const pratos = [
-  {
+  new Prato({
     nome: "Estrombelete de Frango",
     imagem: "img/frango_yin_yang.png",
     descricao: "Um pouco de batata, um pouco de salada",
     preco: 14.9,
-  },
-  {
+  }),
+  new Prato({
     nome: "Asa de Boi",
     imagem: "img/frango_yin_yang.png",
     descricao: "Com molho shoyu",
     preco: 14.9,
-  },
-  {
+  }),
+  new Prato({
     nome: "Carne de Monstro",
     imagem: "img/frango_yin_yang.png",
     descricao: "Com batata assada e farofa",
     preco: 14.9,
-  },
+  }),
 ];
 
 const bebidas = [
@@ -163,27 +193,6 @@ function verificarPedido() {
   }
 }
 
-function getPratoView(prato) {
-  const view = document.createElement("div");
-  view.classList.add("opcao");
-  view.addEventListener("click", () => {
-    selecionarPrato(view, prato.nome, prato.preco);
-  });
-  view.innerHTML = `
-        <img src="${prato.imagem}" />
-        <div class="titulo">${prato.nome}</div>
-        <div class="descricao">${prato.descricao}</div>
-        <div class="fundo">
-            <div class="preco">R$ ${prato.preco.toFixed(2)}</div>
-            <div class="check">
-                <ion-icon name="checkmark-circle"></ion-icon>
-            </div>
-        </div>
-    `;
-
-  return view;
-}
-
 function getBebidaView(bebida) {
   const view = document.createElement("div");
   view.classList.add("opcao");
@@ -227,7 +236,7 @@ function getSobremesaView(sobremesa) {
 }
 
 const pratosContainer = document.querySelector(".opcoes.prato");
-pratos.forEach((prato) => pratosContainer.appendChild(getPratoView(prato)));
+pratos.forEach((prato) => pratosContainer.appendChild(prato.getView()));
 const bebidasContainer = document.querySelector(".opcoes.bebida");
 bebidas.forEach((bebida) =>
   bebidasContainer.appendChild(getBebidaView(bebida))
