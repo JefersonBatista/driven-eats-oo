@@ -6,19 +6,20 @@ const btnConfirmar = document.querySelector(".confirmar");
 const btnCancelar = document.querySelector(".cancelar");
 const btnPedir = document.querySelector(".fazer-pedido");
 
-class Prato {
-  constructor({ nome, imagem, descricao, preco }) {
+class Produto {
+  constructor({ nome, imagem, descricao, preco, selecionar }) {
     this.nome = nome;
     this.imagem = imagem;
     this.descricao = descricao;
     this.preco = preco;
+    this.selecionar = selecionar;
   }
 
   getView() {
     const view = document.createElement("div");
     view.classList.add("opcao");
     view.addEventListener("click", () => {
-      selecionarPrato(view, this.nome, this.preco);
+      this.selecionar(view, this.nome, this.preco);
     });
     view.innerHTML = `
           <img src="${this.imagem}" />
@@ -37,66 +38,75 @@ class Prato {
 }
 
 const pratos = [
-  new Prato({
+  new Produto({
     nome: "Estrombelete de Frango",
     imagem: "img/frango_yin_yang.png",
     descricao: "Um pouco de batata, um pouco de salada",
     preco: 14.9,
+    selecionar: selecionarPrato,
   }),
-  new Prato({
+  new Produto({
     nome: "Asa de Boi",
     imagem: "img/frango_yin_yang.png",
     descricao: "Com molho shoyu",
     preco: 14.9,
+    selecionar: selecionarPrato,
   }),
-  new Prato({
+  new Produto({
     nome: "Carne de Monstro",
     imagem: "img/frango_yin_yang.png",
     descricao: "Com batata assada e farofa",
     preco: 14.9,
+    selecionar: selecionarPrato,
   }),
 ];
 
 const bebidas = [
-  {
+  new Produto({
     nome: "Coquinha gelada",
     imagem: "img/coquinha_gelada.png",
     descricao: "Lata 350ml",
     preco: 4.9,
-  },
-  {
+    selecionar: selecionarBebida,
+  }),
+  new Produto({
     nome: "Caldo de Cana",
     imagem: "img/coquinha_gelada.png",
     descricao: "Copo 600ml",
     preco: 4.9,
-  },
-  {
+    selecionar: selecionarBebida,
+  }),
+  new Produto({
     nome: "Corote Gelado",
     imagem: "img/coquinha_gelada.png",
     descricao: "Garrafa 400ml",
     preco: 4.9,
-  },
+    selecionar: selecionarBebida,
+  }),
 ];
 
 const sobremesas = [
-  {
+  new Produto({
     nome: "Pudim",
     imagem: "img/pudim.png",
     descricao: "Gosto de doce de leite",
     preco: 7.9,
-  },
-  {
+    selecionar: selecionarSobremesa,
+  }),
+  new Produto({
     nome: "Flam",
     imagem: "img/pudim.png",
     descricao: "Gosto de chocolate",
     preco: 7.9,
-  },
-  {
+    selecionar: selecionarSobremesa,
+  }),
+  new Produto({
     nome: "Brigadeiro",
     imagem: "img/pudim.png",
     descricao: "3 unidades",
     preco: 7.9,
-  },
+    selecionar: selecionarSobremesa,
+  }),
 ];
 
 function selecionarPrato(elemento, { nome, preco }) {
@@ -193,57 +203,13 @@ function verificarPedido() {
   }
 }
 
-function getBebidaView(bebida) {
-  const view = document.createElement("div");
-  view.classList.add("opcao");
-  view.addEventListener("click", () => {
-    selecionarBebida(view, bebida.nome, bebida.preco);
-  });
-  view.innerHTML = `
-        <img src="${bebida.imagem}" />
-        <div class="titulo">${bebida.nome}</div>
-        <div class="descricao">${bebida.descricao}</div>
-        <div class="fundo">
-            <div class="preco">R$ ${bebida.preco.toFixed(2)}</div>
-            <div class="check">
-                <ion-icon name="checkmark-circle"></ion-icon>
-            </div>
-        </div>
-    `;
-
-  return view;
-}
-
-function getSobremesaView(sobremesa) {
-  const view = document.createElement("div");
-  view.classList.add("opcao");
-  view.addEventListener("click", () => {
-    selecionarSobremesa(view, sobremesa.nome, sobremesa.preco);
-  });
-  view.innerHTML = `
-        <img src="${sobremesa.imagem}" />
-        <div class="titulo">${sobremesa.nome}</div>
-        <div class="descricao">${sobremesa.descricao}</div>
-        <div class="fundo">
-            <div class="preco">R$ ${sobremesa.preco.toFixed(2)}</div>
-            <div class="check">
-                <ion-icon name="checkmark-circle"></ion-icon>
-            </div>
-        </div>
-    `;
-
-  return view;
-}
-
 const pratosContainer = document.querySelector(".opcoes.prato");
 pratos.forEach((prato) => pratosContainer.appendChild(prato.getView()));
 const bebidasContainer = document.querySelector(".opcoes.bebida");
-bebidas.forEach((bebida) =>
-  bebidasContainer.appendChild(getBebidaView(bebida))
-);
+bebidas.forEach((bebida) => bebidasContainer.appendChild(bebida.getView()));
 const sobremesasContainer = document.querySelector(".opcoes.sobremesa");
 sobremesas.forEach((sobremesa) =>
-  sobremesasContainer.appendChild(getSobremesaView(sobremesa))
+  sobremesasContainer.appendChild(sobremesa.getView())
 );
 
 btnConfirmar.addEventListener("click", () => {
