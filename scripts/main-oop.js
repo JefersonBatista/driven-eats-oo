@@ -1,6 +1,40 @@
-let pratoSelecionado = null;
-let bebidaSelecionada = null;
-let sobremesaSelecionada = null;
+class Pedido {
+  constructor() {
+    this.prato = null;
+    this.bebida = null;
+    this.sobremesa = null;
+  }
+
+  setPrato(prato) {
+    this.prato = prato;
+  }
+
+  setBebida(bebida) {
+    this.bebida = bebida;
+  }
+
+  setSobremesa(sobremesa) {
+    this.sobremesa = sobremesa;
+  }
+
+  verificar() {
+    if (this.prato && this.bebida && this.sobremesa) {
+      btnPedir.classList.add("ativo");
+      btnPedir.disabled = false;
+      btnPedir.innerHTML = "Fazer pedido";
+    }
+  }
+
+  getPrecoTotal() {
+    return this.prato.preco + this.bebida.preco + this.sobremesa.preco;
+  }
+
+  printarPedido() {
+    console.log(this);
+  }
+}
+
+const pedido = new Pedido();
 
 const btnConfirmar = document.querySelector(".confirmar");
 const btnCancelar = document.querySelector(".cancelar");
@@ -19,7 +53,7 @@ class Produto {
     const view = document.createElement("div");
     view.classList.add("opcao");
     view.addEventListener("click", () => {
-      this.selecionar(view, this.nome, this.preco);
+      this.selecionar(view, this);
     });
     view.innerHTML = `
           <img src="${this.imagem}" />
@@ -42,7 +76,7 @@ const pratos = [
     nome: "Estrombelete de Frango",
     imagem: "img/frango_yin_yang.png",
     descricao: "Um pouco de batata, um pouco de salada",
-    preco: 14.9,
+    preco: 140.9,
     selecionar: selecionarPrato,
   }),
   new Produto({
@@ -116,11 +150,11 @@ function selecionarPrato(elemento, { nome, preco }) {
   }
   elemento.classList.add("selecionado");
 
-  pratoSelecionado = {
+  pedido.setPrato({
     nome,
     preco,
-  };
-  verificarPedido();
+  });
+  pedido.verificar();
 }
 
 function selecionarBebida(elemento, { nome, preco }) {
@@ -130,8 +164,8 @@ function selecionarBebida(elemento, { nome, preco }) {
   }
   elemento.classList.add("selecionado");
 
-  bebidaSelecionada = { nome, preco };
-  verificarPedido();
+  pedido.setBebida({ nome, preco });
+  pedido.verificar();
 }
 
 function selecionarSobremesa(elemento, { nome, preco }) {
@@ -141,39 +175,34 @@ function selecionarSobremesa(elemento, { nome, preco }) {
   }
   elemento.classList.add("selecionado");
 
-  sobremesaSelecionada = { nome, preco };
-  verificarPedido();
-}
-
-function getPrecoTotal() {
-  return (
-    pratoSelecionado.preco +
-    bebidaSelecionada.preco +
-    sobremesaSelecionada.preco
-  );
+  pedido.setSobremesa({ nome, preco });
+  pedido.verificar();
 }
 
 function confirmarPedido() {
   const modal = document.querySelector(".overlay");
   modal.classList.remove("escondido");
 
+  pedido.printarPedido();
+
   document.querySelector(".confirmar-pedido .prato .nome").innerHTML =
-    pratoSelecionado.nome;
+    pedido.prato.nome;
   document.querySelector(".confirmar-pedido .prato .preco").innerHTML =
-    pratoSelecionado.preco.toFixed(2);
+    pedido.prato.preco.toFixed(2);
 
   document.querySelector(".confirmar-pedido .bebida .nome").innerHTML =
-    bebidaSelecionada.nome;
+    pedido.bebida.nome;
   document.querySelector(".confirmar-pedido .bebida .preco").innerHTML =
-    bebidaSelecionada.preco.toFixed(2);
+    pedido.bebida.preco.toFixed(2);
 
   document.querySelector(".confirmar-pedido .sobremesa .nome").innerHTML =
-    sobremesaSelecionada.nome;
+    pedido.sobremesa.nome;
   document.querySelector(".confirmar-pedido .sobremesa .preco").innerHTML =
-    sobremesaSelecionada.preco.toFixed(2);
+    pedido.sobremesa.preco.toFixed(2);
 
-  document.querySelector(".confirmar-pedido .total .preco").innerHTML =
-    getPrecoTotal().toFixed(2);
+  document.querySelector(".confirmar-pedido .total .preco").innerHTML = pedido
+    .getPrecoTotal()
+    .toFixed(2);
 }
 
 function cancelarPedido() {
@@ -185,22 +214,14 @@ function enviarZap() {
   const telefoneRestaurante = 553299999999;
   const encodedText = encodeURIComponent(
     `Olá, gostaria de fazer o pedido: \n- Prato: ${
-      pratoSelecionado.nome
+      pedido.prato.nome
     } \n- Bebida: ${bebidaSelecionada.nome} \n- Sobremesa: ${
-      sobremesaSelecionada.nome
-    } \nTotal: R$ ${getPrecoTotal().toFixed(2)}`
+      pedido.sobremesa.nome
+    } \nTotal: R$ ${pedido.getPrecoTotal().toFixed(2)}`
   );
 
   const urlWhatsapp = `https://wa.me/${telefoneRestaurante}?text=${encodedText}`;
   window.open(urlWhatsapp);
-}
-
-function verificarPedido() {
-  if (pratoSelecionado && bebidaSelecionada && sobremesaSelecionada) {
-    btnPedir.classList.add("ativo");
-    btnPedir.disabled = false;
-    btnPedir.innerHTML = "Fazer pedido";
-  }
 }
 
 const pratosContainer = document.querySelector(".opcoes.prato");
