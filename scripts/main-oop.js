@@ -29,8 +29,16 @@ class Pedido {
     return this.prato.preco + this.bebida.preco + this.sobremesa.preco;
   }
 
-  printarPedido() {
-    console.log(this);
+  getEncodedText() {
+    const encodedText = encodeURIComponent(
+      `Olá, gostaria de fazer o pedido: \n- Prato: ${
+        this.prato.nome
+      } \n- Bebida: ${this.bebida.nome} \n- Sobremesa: ${
+        this.sobremesa.nome
+      } \nTotal: R$ ${pedido.getPrecoTotal().toFixed(2)}`
+    );
+
+    return encodedText;
   }
 }
 
@@ -183,8 +191,6 @@ function confirmarPedido() {
   const modal = document.querySelector(".overlay");
   modal.classList.remove("escondido");
 
-  pedido.printarPedido();
-
   document.querySelector(".confirmar-pedido .prato .nome").innerHTML =
     pedido.prato.nome;
   document.querySelector(".confirmar-pedido .prato .preco").innerHTML =
@@ -212,15 +218,8 @@ function cancelarPedido() {
 
 function enviarZap() {
   const telefoneRestaurante = 553299999999;
-  const encodedText = encodeURIComponent(
-    `Olá, gostaria de fazer o pedido: \n- Prato: ${
-      pedido.prato.nome
-    } \n- Bebida: ${bebidaSelecionada.nome} \n- Sobremesa: ${
-      pedido.sobremesa.nome
-    } \nTotal: R$ ${pedido.getPrecoTotal().toFixed(2)}`
-  );
 
-  const urlWhatsapp = `https://wa.me/${telefoneRestaurante}?text=${encodedText}`;
+  const urlWhatsapp = `https://wa.me/${telefoneRestaurante}?text=${pedido.getEncodedText()}`;
   window.open(urlWhatsapp);
 }
 
